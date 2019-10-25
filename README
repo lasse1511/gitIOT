@@ -1,0 +1,87 @@
++------------------------------------------------------+
+|PLEASE READ THIS BEFORE USING THE FILES IN THIS FOLDER|
++------------------------------------------------------+
+
+The scripts in this folder implements a generalized 
+deduplication-based data compressor. 
+
+The general state of this project is that the project 
+may take a bit of work to get used to; it may also 
+be necessary to tweak it a bit to make it work for 
+any data at hand.
+
+----------------------------------------------------
+
+To understand what is going on, I recommend first 
+reading the two papers in the folder:
+
+ [1] R. Vestergaard, Q. Zhang, and D. E. Lucani,
+     “Lossless Compression of Time Series Data with
+     Generalized Deduplication,” in IEEE GLOBECOM 
+     (accepted, to appear), Waikoloa, USA, dec 2019
+
+ [2] A Randomly Accessible Lossless Compression 
+     Scheme for Time-Series Data. (UNDER REVIEW)
+
+Please note that [2] is under double-blind review, 
+so do not share it.
+
+----------------------------------------------------
+
+An example is provided, that you can use as a starting
+point to figure out how to use the compressor.
+The example data I provided is from ECG, and is part
+of a larger dataset called 'cdb' (compression test 
+database) from physionet. 
+The data is sampled with 12 bit fixed precision.
+The same data is there in three relevant formats:
+ a) "intformat", i.e., the sampled integer value
+ b) "packed", which packs the data, so each sample
+    uses 12 bits rather than what the integer format
+    requires. This is the real data size.
+ c) "unpacked", i.e., binary .csv format where each
+    bit is represented with its own integer.
+
+----------------------------------------------------
+
+Here's a short description of some of the files:
+
+         ***** GDFileCompressorBST.py *****
+This is the central piece of the project, implementing
+the compressor. 
+You choose the parameters that it should use for compression.
+As of this time, it compresses "unpacked" files that are 
+already in a BINARY only format. Files can be either:
+
+  a) .csv (, separated) containing only 0s and 1s
+  b) .npy (numpy format) containing only 0s and 1s
+
+Running this file directly runs a compression on the 
+data in the "unpacked" folder, which is in the
+appropriate .csv format.
+
+It outputs a "compressed" folder containing the data.
+The output consists of:
+ a) One file for each input file telling how to reconstruct
+ b) One file containing the bases (bases.gd.npy)
+ c) One file containing the parameters (It actually contains
+    more than necessary)
+ d) A usage file (THIS IS NOT REQUIRED FOR THE RECONSTRUCTION,
+    IT IS ONLY GENERATED FOR STATISTICAL PURPOSES).
+Thus, the compressed size is a)+b)+c).
+
+         ***** parameter_heuristics.py *****
+This script is for estimation of what the parameters 
+of the other file should be. It is less well documented
+and I would recommend starting with you trying to pick
+the parameters on your own, and later trying to see how
+this works for you. The quality of the estimate will
+depend on the quality of the file used for estimation,
+which should be "large enough".
+
+         ***** binaryfunctions.py *****
+This has a bunch of functions for converting data types,
+and you will probably find it useful to convert your 
+data to the binary format required for the compressor.
+
+
