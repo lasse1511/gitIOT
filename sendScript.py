@@ -1,3 +1,3 @@
-import client as c;
+import clientCompressed as c;
 
 c.send();
