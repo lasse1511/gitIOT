@@ -17,7 +17,6 @@ while True:
     try:
         rdata = conn.recv(1024)
         if not rdata: break
-        
         if timesdatasend == 0:
             data=rdata;
         else:
@@ -35,8 +34,8 @@ while True:
 myFile = open('csvdata.csv', 'w')
 print(len(data))
 strdata=str(data);
-strdata=strdata.replace('b','');
-strdata=strdata.replace('\'','');
+#strdata=strdata.replace('b','');
+#strdata=strdata.replace('\'','');
 with myFile:
     writer = csv.writer(myFile)
     myBitLenght=12;
