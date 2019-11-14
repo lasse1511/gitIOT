@@ -11,14 +11,14 @@ ipadresse= gethostbyname(gethostname());
 print (ipadresse);
 server.bind(('',9997))
 print (server);
-server.listen(3);
+server.listen(10);
 conn, addr = server.accept()     # Establish connection with client.
 print ('Got connection from', addr)
 data = str("").encode()
 while True:
     try:
         rdata = conn.recv(1024)
-        if not rdata: break            
+        if not rdata: break
         data+=rdata;
 
         print('Server received', repr(rdata))
@@ -29,8 +29,10 @@ while True:
     finally:
         server.close();
 #if type(rdata)==str and title=false:
-data=str(data)
-
+#data=str(data)
+data = data.split(b'FILENAME:')
+print("Dette er vores array af filnavne:" , data)
+print("Deete har jeg modtager", data)
 print("Længden af data", len(data))
 print("Længden af data str", len(str(data).encode()))
 data=data.replace("\'b\'","")
