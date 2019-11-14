@@ -1,12 +1,9 @@
-def foo():
-    print("bar");
-
 def send():
 
     import socket
     import sys
     s = socket.socket();
-    s.connect(('192.168.0.102',9999))
+    s.connect(('192.168.0.102',9997))
     f = open ("unpacked/08730_01.csv", "rb")
     l = f.read(1024)
     print('Length of file: ', len(l))
