@@ -31,29 +31,18 @@ while True:
 #if type(rdata)==str and title=false:
 #data=str(data)
 data = data.split(b'FILENAME:')
-print("Dette er vores array af filnavne:" , data)
-print("Deete har jeg modtager", data)
-print("Længden af data", len(data))
-print("Længden af data str", len(str(data).encode()))
-data=data.replace("\'b\'","")
-print(len(data.split("b")))
-data=data.split("FILENAME")
-print("Længden af data-array", len(data))
-for x in data:
-    if (x[0]==':'):
-        index = x.split("\\")
-        filename=index[0]
-        filename=filename[1:]
-        
-        data_to_save = str(x[len(filename)+1:]).encode()
-        #print(filename, data_to_save)
-        myFile = open(filename, 'wb')
-        myFile.write(data_to_save)
-        myFile.close()
-        print(data_to_save)
-        print(len(x))
-        print(filename," fylder ", len(data_to_save)," bits nu")
-    
+# print("Dette er vores array af filnavne:" , data)
+# print("Deete har jeg modtager", data)
+# print("Længden af data", len(data))
+# print("Længden af data str", len(str(data).encode()))
+for i in range(1,len(data)):
+    filename, data_to_save = data[i].split(b'DATA:')
+    filename = filename.decode('utf-8')
+    myFile = open("compressed/"+filename, 'wb')
+    myFile.write(data_to_save)
+    myFile.close()
+    print(filename," fylder ", len(data_to_save)," bytes nu")
+
 
 
 
