@@ -61,6 +61,48 @@ class FileCompressor():
         """
         return np.ceil(np.log2(1+largest_idx)).astype(int)
     
+    def compressWithExistingBases(self, filedata, pathExistingBases):
+        """
+        Compresses a particular array.
+        """
+        if type(self.reordering) == type(None):
+            ### Determine how to reorder the data acoording to Mutual Information,
+            ### if we don't already know.
+            self.reordering = self._estimate_reordering(filedata)
+            
+        ### Reorder the data according to correlation
+        data = filedata[:,self.reordering]
+
+        ###Init bases from existing bases
+        bases = np.unpackbits(np.load(self.outfolder+'bases.gd.npy'))
+        bases = bases[:len(bases)-len(bases)%self.k]
+        bases = bases.reshape(-1, self.k)
+        for base in bases: 
+            self.bases.insert(base)
+
+        ### Split the data
+        file_bases = data[:,:self.k]
+        file_deviations = data[:,self.k:]
+        file_base_idx = np.zeros(file_bases.shape[0], dtype=int)
+        
+        ### Deduplicate the bases
+        for i, base in enumerate(file_bases):
+            file_base_idx[i]  = self.bases.insert(base)
+
+        ### Represent base idx's as binary
+        base_idx_repr_len = self._bits_for_base_repr(max(file_base_idx))
+        file_base_idx_ = bf.intarray_to_binary(file_base_idx, base_idx_repr_len)
+
+        ### Interleave bases and deviations for storage.
+        gd_data = np.hstack((file_base_idx_, file_deviations))
+        gd_data = gd_data.ravel()
+ 
+        ### Add base_repr_length to stored file, using EliasGamma code:
+        if base_idx_repr_len == 0:
+            return gd_data
+        gd_data = np.hstack((EliasGammaEncode(base_idx_repr_len), gd_data))
+        return gd_data
+
     def compress(self, filedata):
         """
         Compresses a particular array.
@@ -126,12 +168,16 @@ class FileCompressor():
                 i_delta = previous ^ filedata[:,i*n_s:(i+1)*n_s]
                 filedata[:,i*n_s:(i+1)*n_s] = i_delta
             """
-        out = self.compress(filedata)
-        print("Outfolder: ", self.outfolder)
+        try:
+            file_exists = open("compressed/bases.gd.npy", "rb")
+            out = self.compressWithExistingBases(filedata, "compressed/bases.gd.npy")
+        except:
+            out = self.compress(filedata)
+        # print("Outfolder: ", self.outfolder)
         np.save(self.outfolder+"params.gd", np.hstack((np.array([self.k, self.l]), self.reordering)))
         np.save(self.outfolder+"bases.gd", np.packbits(self.bases.serialize().astype(int)))
         np.save(self.outfolder+"usage.gd", self.bases.usage())
-        np.save(self.outfolder+"compressedfile"+".gd", np.packbits(out))
+        np.save(self.outfolder+file.name.split('/')[-1]+".gd", np.packbits(out))
         
     def CompressFolder(self, folder):
         """

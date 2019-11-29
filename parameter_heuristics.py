@@ -66,7 +66,8 @@ print("Let c={}".format(c))
 Now we move to estimate the deviation length...
 For this we use the unpacked data.
 """
-
+# data_folder = "unpacked/"
+# files = os.listdir(data_folder)
 unpacked_file = 'unpacked/' + files[0]
 
 try:
@@ -106,4 +107,4 @@ if dev_size == 1:
     c = 1
     dev_size = 0
     
-print("PARAMETERS ESTIMATED: c={}, devsize={}".format(c, dev_size))
+print("PARAMETERS ESTIMATED: k={}, devsize={}".format(c*n_s-dev_size, dev_size))
