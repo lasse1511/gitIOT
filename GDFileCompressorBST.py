@@ -176,7 +176,7 @@ class FileCompressor():
         # print("Outfolder: ", self.outfolder)
         np.save(self.outfolder+"params.gd", np.hstack((np.array([self.k, self.l]), self.reordering)))
         np.save(self.outfolder+"bases.gd", np.packbits(self.bases.serialize().astype(int)))
-        np.save(self.outfolder+"usage.gd", self.bases.usage())
+        # np.save(self.outfolder+"usage.gd", self.bases.usage())
         np.save(self.outfolder+file.name.split('/')[-1]+".gd", np.packbits(out))
         
     def CompressFolder(self, folder):
@@ -217,8 +217,8 @@ class FileCompressor():
         data = np.hstack((decoded_bases, deviations))
 
         ### Rearrange to standard configuration
-        redo_ordering = [0]*(C.k+C.l)
-        for i, j in enumerate(C.reordering):
+        redo_ordering = [0]*(self.k+self.l)
+        for i, j in enumerate(self.reordering):
             redo_ordering[j] = i
         data = data[:, redo_ordering]
 
@@ -244,7 +244,7 @@ def AssertFileEquality(fileA, fileB):
     dataB = np.genfromtxt(fileB, delimiter=',').astype(int)
     dataA = dataA.reshape(1,-1).ravel()
     dataB = dataB.reshape(1,-1).ravel()
-    assert(np.alltrue(np.equal(dataA, dataB)))
+    return np.alltrue(np.equal(dataA, dataB))
     
 if __name__ == '__main__':
     cwd = os.getcwd()

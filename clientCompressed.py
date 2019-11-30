@@ -1,4 +1,4 @@
-def send():
+def send(fileDirectory):
 
     import socket
     import sys
@@ -9,25 +9,17 @@ def send():
     totBits = 0
     x = 1
     dataStr = ""
-    for filename in os.listdir('compressed'):
+    for filename in os.listdir(fileDirectory):
         filenametosend=str("FILENAME:"+filename+"DATA:").encode()
         print(filenametosend)
-        # totBits+=len(filenametosend)
         s.send(filenametosend)
-        # dataStr+=str(filenametosend)
-        # print(filenametosend)
-        f = open ("compressed/"+filename, "rb")
+        f = open (fileDirectory+filename, "rb")
         l = f.read(1024)
         while (l):
             data = l
-            # print('Sending data ', x, " with length: ", len(data))
             x = x+1
             totBits = totBits+ len(data)
             s.send(data)
             dataStr+=str(l)
             l = f.read(1024)
-    # print('Closing connection')
     s.close()
-    # print(dataStr.split("b'FILENAME"))
-    # print("Total bits send: ", totBits)
-    # print(len(dataStr))
